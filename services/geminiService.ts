@@ -3,15 +3,31 @@ import { Coin } from '../types';
 
 let client: GoogleGenAI | null = null;
 
+// NOTE FOR DEPLOYMENT: The API key is hardcoded here for demonstration purposes
+// to ensure the deployed site works immediately without needing to configure
+// environment variables on the hosting platform. In a real production app,
+// this key MUST be stored securely in an environment variable.
+const API_KEY = 'AIzaSyAafYtMmo03AbwJ9xsNsdHDEY_zJ0_t4co';
+
+
 const getClient = () => {
   if (!client) {
-    client = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    // Use the hardcoded key. If it's not available, fallback to process.env
+    const keyToUse = API_KEY || process.env.API_KEY;
+    if (!keyToUse) {
+        console.error("API Key is missing. Please provide it.");
+        return null;
+    }
+    client = new GoogleGenAI({ apiKey: keyToUse });
   }
   return client;
 };
 
 export const analyzeMarket = async (coins: Coin[], query: string) => {
   const ai = getClient();
+  if (!ai) {
+    return "عذراً، مفتاح API غير متوفر. لا يمكن الاتصال بالمساعد الذكي.";
+  }
   
   // Create context from current market data
   const marketContext = coins.map(c => 
@@ -48,6 +64,9 @@ export const analyzeMarket = async (coins: Coin[], query: string) => {
 
 export const getSmartInsight = async (coin: Coin) => {
     const ai = getClient();
+    if (!ai) {
+        return "لا تتوفر تحليلات حالياً.";
+    }
     const prompt = `
       Provide a very short (max 2 sentences) technical analysis summary for ${coin.name} (${coin.symbol}) in Arabic.
       Price: ${coin.price}, 24h Change: ${coin.change24h}%.

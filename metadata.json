@@ -1,0 +1,8 @@
+{
+  "name": "CoinSouq",
+  "description": "منصة عربية متطورة لتداول العملات الرقمية مع مساعد ذكي لتحليل السوق.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}
